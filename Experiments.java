@@ -141,7 +141,7 @@ public class Experiments {
     {
       l.add(x);
     }
-    if(l.size().equals(items.size()))
+    if(l.size() == items.size())
     {
       return l;
     }
