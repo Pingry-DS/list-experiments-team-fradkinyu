@@ -53,7 +53,11 @@ public class Experiments {
    * @return A reference to the constructed List
    */
   public static List<String> HeadInsert(int times, String payload) {
-  
+      List<String> list = new ArrayList<String>();
+      for (int i = 0; i < times; i++) {
+          list.add(0, payLoad); 
+      }
+      return list; 
   }
   
   /**
@@ -64,7 +68,11 @@ public class Experiments {
    * @return A reference to the constructed List
    */
   public static List<String> TailInsert(int times, String payload) {
-  
+      List<String> list = new ArrayList<String>();
+      for(int i = 0; i < times; i++) {
+        list.add(payload);
+      }
+      return list;
   }
   
   
@@ -79,14 +87,14 @@ public class Experiments {
    * @return A reference to the constructed List
    */
   public static List<String> MidpointInsert(int times, String payload) {
-    List<T> l = new ArrayList<T>();
+    List<String> l = new ArrayList<String>();
     for(int i = 0; i < times; i++) {
       l.add(l.size() / 2, payload);
     }
     return l;
   }
   
-  //TODO Maybe make a ReverseAlternateInsert too.
+ 
   /**
    * Creates a List and inserts the given payload the specified number of times as if the List
    * items were arranged in a circle with new items inserted after every other existing item.
@@ -96,9 +104,28 @@ public class Experiments {
    * @return A reference to the constructed List
    */
   public static List<String> AlternateInsert(int times, String payload) {
-  
-  }
-  
+    List<String> l = new ArrayList<String>();
+    
+    int currentIndex = 0;
+    int jump = 2;
+
+    for (int i = 0; i < times; i++) {
+      if (currentIndex == l.size()-2) {
+        currentIndex = 0;
+        jump = 1; 
+      }
+      if (currentIndex == l.size()-1) {
+        currentIndex = 0;
+        jump = 2;
+      }
+
+    l.add(jump, payLoad); 
+ 
+    currentIndex = jump;
+    jump += 3;  } 
+    
+     }
+
   //TODO Use a comparator in this method
   /**
    * Creates a List and inserts the given payload items, in the order they are given. Each item
