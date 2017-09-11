@@ -136,7 +136,12 @@ public class Experiments {
    * @return A reference to the constructed List
    */
   public static List<String> SortedInsert(List<String> items) {
-    return null;
+    List<String> l = new ArrayList<String>();
+    for(String x : items)
+    {
+      l.add(x);
+    }
+    return l;
   }
 
 }
