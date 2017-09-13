@@ -1,12 +1,13 @@
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Comparator;
 
 public class Experiments {
 
   public static void main(String[] args) {
   
-    //TODO Check command line for number of iterations
-    int iterations = 10000;
+  
+    int iterations = Integer.parseInt(args[0]);
     
     // Keep track of the run time for each call
     long start = System.nanoTime();
@@ -30,17 +31,17 @@ public class Experiments {
     start = end;
     AlternateInsert(iterations, "Hello");
     end = System.nanoTime();
-    System.out.println("Insertion at tail took " + (end - start)/1000000.0 + "ms.\n");
-    
-    start = end;
-    AlternateInsert(iterations, "Hello");
-    end = System.nanoTime();
     System.out.println("Alternate insertion took " + (end - start)/1000000.0 + "ms.\n");
     
     start = end;
-    SortedInsert(iterations);
+    ReverseAlternateInsert(iterations, "Hello");
     end = System.nanoTime();
-    System.out.println("Sorted insertion took " + (end - start)/1000000.0 + "ms.\n");
+    System.out.println("Reverse alternate insertion took " + (end - start)/1000000.0 + "ms.\n");
+    
+    //start = end;
+   // SortedInsert(iterations);
+    //end = System.nanoTime();
+    //System.out.println("Sorted insertion took " + (end - start)/1000000.0 + "ms.\n");
   
   }
   
@@ -52,10 +53,10 @@ public class Experiments {
    * @param payload The actual string to be inserted
    * @return A reference to the constructed List
    */
-  public static List<String> HeadInsert(int times, String payload) {
-      List<String> list = new ArrayList<String>();
+  public static <T> List<T> HeadInsert(int times, T payload) {
+      List<T> list = new ArrayList<T>();
       for (int i = 0; i < times; i++) {
-          list.add(0, payLoad); 
+          list.add(0, payload); 
       }
       return list; 
   }
@@ -67,10 +68,10 @@ public class Experiments {
    * @param payload The actual string to be inserted
    * @return A reference to the constructed List
    */
-  public static List<String> TailInsert(int times, String payload) {
-      List<String> list = new ArrayList<String>();
+  public static <T> List<T> TailInsert(int times, T payload) {
+      List<T> list = new ArrayList<T>();
       for(int i = 0; i < times; i++) {
-        list.add(payload);
+        list.add(list.size(), payload);
       }
       return list;
   }
@@ -86,8 +87,8 @@ public class Experiments {
    * @param payload The actual string to be inserted
    * @return A reference to the constructed List
    */
-  public static List<String> MidpointInsert(int times, String payload) {
-    List<String> l = new ArrayList<String>();
+  public static <T> List<T> MidpointInsert(int times, T payload) {
+    List<T> l = new ArrayList<T>();
     for(int i = 0; i < times; i++) {
       l.add(l.size() / 2, payload);
     }
@@ -103,30 +104,55 @@ public class Experiments {
    * @param payload The actual string to be inserted
    * @return A reference to the constructed List
    */
-  public static List<String> AlternateInsert(int times, String payload) {
-    List<String> l = new ArrayList<String>();
-    
-    int currentIndex = 0;
-    int jump = 2;
-
-    for (int i = 0; i < times; i++) {
-      if (currentIndex == l.size()-2) {
-        currentIndex = 0;
-        jump = 1; 
+  public static <T> List<T> AlternateInsert(int times, T payload) {
+    List<T> l = new ArrayList<T>();
+    int place = 0; 
+    for (int i =0; i < times; i++) {
+      if (place == l.size()-1) {
+        place = 2;
       }
-      if (currentIndex == l.size()-1) {
-        currentIndex = 0;
-        jump = 2;
+      else if(place == l.size()-2) {
+        place = 1;
       }
-
-    l.add(jump, payLoad); 
- 
-    currentIndex = jump;
-    jump += 3;  } 
+      else if(place > l.size()-1) {
+        place = place-l.size();
+      }
+      l.add(place, payload);
+      place += 2; 
+    }
+    return l;
     
      }
 
-  //TODO Use a comparator in this method
+    /**
+   * Creates a List and inserts the given payload the specified number of times as if the List
+   * items were arranged in a circle with new items inserted before every other existing item.
+   *
+   * @param times How many times the payload should be inserted
+   * @param payload The actual string to be inserted
+   * @return A reference to the constructed List
+   */
+  public static <T> List<T> ReverseAlternateInsert(int times, T payload) {
+    List<T> l = new ArrayList<T>();
+    int place = 0; 
+    for (int i =0; i < times; i++) {
+      if (place == l.size()-1) {
+        place = 1;
+      }
+      else if(place == l.size()-2) {
+        place = 0;
+      }
+      else if(place > l.size()-1) {
+        place = place-l.size();
+      }
+      l.add(place, payload);
+      place += 1; 
+    }
+    return l;
+    
+     }
+
+
   /**
    * Creates a List and inserts the given payload items, in the order they are given. Each item
    * is inserted in the proper location such that at all times the constructed List is
@@ -135,17 +161,19 @@ public class Experiments {
    * @param items The items to be inserted. Given in no particular order.
    * @return A reference to the constructed List
    */
-  public static List<String> SortedInsert(List<String> items) {
-    List<String> l = new ArrayList<String>();
-    for(String x : items)
+  public static <T> List<T> SortedInsert(List<T> items, Comparator<T> comp) {
+    List<T> l = new ArrayList<T>();
+    for(int i = 0; i < items.size(); i++) 
     {
-      l.add(x);
+      int place = 1;
+      while (place < l.size() && (comp.compare(items.get(i), items.get(place)) < 0 )) {
+      l.add(place , items.get(i));
+      place++;
+      } 
+    
     }
-    if(l.size() == items.size())
-    {
-      return l;
-    }
-    return items;
+   
+    return l;
   }
 
 }
